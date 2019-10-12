@@ -6,25 +6,21 @@ OBJS += $(BUILD_DIR)/func.o
 TOOLPATH = ../z_tools/
 INCPATH  = ../z_tools/haribote/
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -Wall -quiet
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
-MAKEFONT = $(TOOLPATH)makefont.exe
-COPY     = copy
-DEL      = del
+GCC		 = i686-w64-mingw32-gcc
+MAKE     = make
+NASM     = nasm
+
+CFLAGS	= -nostdlib -Wall -fno-builtin -O3 -DHOST_CYGWIN
 
 all :
 	$(MAKE) img -f qemu.mk
 
-$(BUILD_DIR)/%.o : %.c qemu.mk
-	$(CC1) -o $(BUILD_DIR)/$*.gas $*.c
-	$(GAS2NASK) $(BUILD_DIR)/$*.gas $(BUILD_DIR)/$*.nas
-	$(NASK) $(BUILD_DIR)/$*.nas $(BUILD_DIR)/$*.o
+$(BUILD_DIR)/%.o : %.c
+	$(GCC) -o $(BUILD_DIR)/$*.o $(CFLAGS) -c $*.c
 
 img : $(OBJS)
 	$(MAKE) -C qemu
 
 clean:
-	make -C qemu -f 2.mk clean
+	make -C qemu clean
 

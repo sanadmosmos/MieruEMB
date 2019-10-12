@@ -11,11 +11,9 @@ OBJS_BOOTPACK += func.o
 TOOLPATH = ../../z_tools/
 INCPATH  = ../../z_tools/haribote/
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
-CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -quiet
-#CC1		+= -Wall
-GAS2NASK = $(TOOLPATH)gas2nask.exe -a
+GCC		 = i686-w64-mingw32-gcc
+MAKE     = make
+NASM     = nasm
 OBJ2BIM  = $(TOOLPATH)obj2bim.exe
 MAKEFONT = $(TOOLPATH)makefont.exe
 BIN2OBJ  = $(TOOLPATH)bin2obj.exe
@@ -23,8 +21,9 @@ BIM2HRB  = $(TOOLPATH)bim2hrb.exe
 RULEFILE = $(TOOLPATH)haribote/haribote.rul
 EDIMG    = $(TOOLPATH)edimg.exe
 IMGTOL   = $(TOOLPATH)imgtol.com
-COPY     = copy
-DEL      = del
+RM       = rm -rf
+
+CFLAGS	= -nostdlib -Wall -fno-builtin -O3 -DHOST_CYGWIN
 
 # デフォルト動作
 
@@ -34,10 +33,13 @@ default :
 # ファイル生成規則
 
 ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin
+	$(NASM) -fbin -o ipl10.bin ipl10.nas
 
 asmhead.bin : asmhead.nas Makefile
-	$(NASK) asmhead.nas asmhead.bin
+	$(NASM) -fbin -o asmhead.bin asmhead.nas
+
+naskfunc.o : naskfunc.nas
+	$(NASM) -fwin32 -o naskfunc.o naskfunc.nas
 
 bootpack.bim : $(OBJS_BOOTPACK) Makefile
 	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
@@ -48,7 +50,8 @@ bootpack.hrb : bootpack.bim Makefile
 	$(BIM2HRB) bootpack.bim bootpack.hrb 0
 
 $(TARGET_SYS) : asmhead.bin bootpack.hrb Makefile
-	copy /B asmhead.bin+bootpack.hrb $(TARGET_SYS)
+	cat asmhead.bin bootpack.hrb > $(TARGET_SYS)
+#	copy /B asmhead.bin+bootpack.hrb $(TARGET_SYS)
 
 $(TARGET_IMG) : ipl10.bin $(TARGET_SYS) Makefile
 	$(EDIMG)   imgin:../../z_tools/fdimg0at.tek \
@@ -58,14 +61,8 @@ $(TARGET_IMG) : ipl10.bin $(TARGET_SYS) Makefile
 
 # 一般規則
 
-%.gas : %.c Makefile
-	$(CC1) -o $*.gas $*.c
-
-%.nas : %.gas Makefile
-	$(GAS2NASK) $*.gas $*.nas
-
-%.o : %.nas Makefile
-	$(NASK) $*.nas $*.o
+%.o	: %.c
+	$(GCC) -o $*.o $(CFLAGS) -c $*.c
 
 # コマンド
 
@@ -73,15 +70,14 @@ img :
 	$(MAKE) $(TARGET_IMG)
 
 clean :
-	-$(DEL) *.bin
-	-$(DEL) *.o
-	-$(DEL) *.gas
-	-$(DEL) *.nas
-	-$(DEL) bootpack.map
-	-$(DEL) bootpack.bim
-	-$(DEL) bootpack.hrb
-	-$(DEL) $(TARGET_SYS)
+	-$(RM) *.bin
+	-$(RM) *.o
+	-$(RM) *.gas
+	-$(RM) bootpack.map
+	-$(RM) bootpack.bim
+	-$(RM) bootpack.hrb
+	-$(RM) $(TARGET_SYS)
 
 src_only :
 	$(MAKE) clean
-	-$(DEL) $(TARGET_IMG)
+	-$(RM) $(TARGET_IMG)
