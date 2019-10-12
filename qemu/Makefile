@@ -15,12 +15,9 @@ GCC		 = i686-w64-mingw32-gcc
 MAKE     = make
 NASM     = nasm
 OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-MAKEFONT = $(TOOLPATH)makefont.exe
-BIN2OBJ  = $(TOOLPATH)bin2obj.exe
 BIM2HRB  = $(TOOLPATH)bim2hrb.exe
 RULEFILE = $(TOOLPATH)haribote/haribote.rul
 EDIMG    = $(TOOLPATH)edimg.exe
-IMGTOL   = $(TOOLPATH)imgtol.com
 RM       = rm -rf
 
 CFLAGS	= -nostdlib -Wall -fno-builtin -O3 -DHOST_CYGWIN

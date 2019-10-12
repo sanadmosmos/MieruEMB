@@ -3,9 +3,6 @@ OBJS = $(BUILD_DIR)/main.o
 OBJS += $(BUILD_DIR)/mylib.o
 OBJS += $(BUILD_DIR)/func.o
 
-TOOLPATH = ../z_tools/
-INCPATH  = ../z_tools/haribote/
-
 GCC		 = i686-w64-mingw32-gcc
 MAKE     = make
 NASM     = nasm
