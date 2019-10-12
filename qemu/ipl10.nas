@@ -7,7 +7,7 @@ CYLS	EQU		10				; どこまで読み込むか
 
 ; 以下は標準的なFAT12フォーマットフロッピーディスクのための記述
 
-		JMP		entry
+		JMP SHORT entry
 		DB		0x90
 		DB		"HARIBOTE"		; ブートセクタの名前を自由に書いてよい（8バイト）
 		DW		512				; 1セクタの大きさ（512にしなければいけない）
@@ -102,6 +102,6 @@ msg:
 		DB		0x0a			; 改行
 		DB		0
 
-		RESB	0x7dfe-$		; 0x7dfeまでを0x00で埋める命令
+		RESB	0x1fe-($-$$)		; 0x7dfeまでを0x00で埋める命令
 
 		DB		0x55, 0xaa

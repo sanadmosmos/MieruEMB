@@ -1,6 +1,5 @@
 #include "bootpack.h"
 #include "../define.h"
-#include <stdio.h>
 
 
 /**********************************************************************

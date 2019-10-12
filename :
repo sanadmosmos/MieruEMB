@@ -11,8 +11,8 @@ OBJS_BOOTPACK += func.o
 TOOLPATH = ../../z_tools/
 INCPATH  = ../../z_tools/haribote/
 
-MAKE     = $(TOOLPATH)make.exe -r
-NASK     = $(TOOLPATH)nask.exe
+MAKE     = make -f 3.mk
+NASM     = nasm
 CC1      = $(TOOLPATH)cc1.exe -I$(INCPATH) -Os -quiet
 #CC1		+= -Wall
 GAS2NASK = $(TOOLPATH)gas2nask.exe -a
@@ -34,10 +34,10 @@ default :
 # ファイル生成規則
 
 ipl10.bin : ipl10.nas Makefile
-	$(NASK) ipl10.nas ipl10.bin
+	$(NASM) -fbin -o ipl10.bin ipl10.nas
 
 asmhead.bin : asmhead.nas Makefile
-	$(NASK) asmhead.nas asmhead.bin
+	$(NASM) -fbin -o asmhead.bin asmhead.nas
 
 bootpack.bim : $(OBJS_BOOTPACK) Makefile
 	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map \
@@ -58,14 +58,8 @@ $(TARGET_IMG) : ipl10.bin $(TARGET_SYS) Makefile
 
 # 一般規則
 
-%.gas : %.c Makefile
-	$(CC1) -o $*.gas $*.c
-
-%.nas : %.gas Makefile
-	$(GAS2NASK) $*.gas $*.nas
-
-%.o : %.nas Makefile
-	$(NASK) $*.nas $*.o
+%.o	: %.c
+	gcc -o $*.o -c $*.c
 
 # コマンド
 
