@@ -13,18 +13,18 @@ struct BOOTINFO { /* 0x0ff0-0x0fff */
 #define ADR_BOOTINFO	0x00000ff0
 
 /* naskfunc.nas */
-void io_hlt(void);
-void io_cli(void);
-void io_sti(void);
-void io_stihlt(void);
-int io_in8(int port);
-void io_out8(int port, int data);
-int io_load_eflags(void);
-void io_store_eflags(int eflags);
-void load_gdtr(int limit, int addr);
-void load_idtr(int limit, int addr);
-void asm_inthandler20(void);
-void asm_inthandler21(void);
+extern void io_hlt(void);
+extern void io_cli(void);
+extern void io_sti(void);
+extern void io_stihlt(void);
+extern int io_in8(int port);
+extern void io_out8(int port, int data);
+extern int io_load_eflags(void);
+extern void io_store_eflags(int eflags);
+extern void load_gdtr(int limit, int addr);
+extern void load_idtr(int limit, int addr);
+extern void asm_inthandler20(void);
+extern void asm_inthandler21(void);
 
 /* graphic.c */
 #define COL8_000000		0	// black

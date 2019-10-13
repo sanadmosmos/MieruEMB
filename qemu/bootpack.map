@@ -1,88 +1,149 @@
-text size :   9717(0x025F5)
-data size :   4960(0x01360)
-bss  size :      0(0x00000)
 
-0x00000030 : _init_palette
-0x00000030 : (.text)
-0x000000D0 : _set_palette
-0x00000180 : _init_gdtidt
-0x00000260 : _HariMain
-0x00000480 : _set_segmdesc
-0x000004E0 : _set_gatedesc
-0x00000510 : _init_pic
-0x00000610 : _inthandler21
-0x00000660 : _init_pit
-0x000006B0 : _inthandler20
-0x000006E0 : (.text)
-0x000006E0 : _io_hlt
-0x000006E2 : _io_cli
-0x000006E4 : _io_sti
-0x000006E6 : _io_stihlt
-0x000006E9 : _io_in8
-0x000006F4 : _io_in16
-0x00000700 : _io_in32
-0x00000706 : _io_out8
-0x00000710 : _io_out16
-0x0000071B : _io_out32
-0x00000725 : _io_load_eflags
-0x00000728 : _io_store_eflags
-0x0000072F : _load_gdtr
-0x0000073F : _load_idtr
-0x0000074F : _asm_inthandler20
-0x00000766 : _asm_inthandler21
-0x00000780 : _MieruEmb_main
-0x00000780 : (.text)
-0x00001170 : _mylib_putpic
-0x00001170 : (.text)
-0x00001200 : _mylib_putc
-0x000012D0 : _mylib_putnum
-0x000013A0 : _mylib_msleep
-0x000013E0 : _mylib_clear
-0x00001410 : _mino_clear
-0x00001410 : (.text)
-0x000017B0 : _map_clear
-0x00001C10 : _putblock
-0x00001D40 : _putmino
-0x00001EC0 : _putgrid
-0x00001F60 : _putmap
-0x000020C0 : _judge_set
-0x00002490 : _rotate_mino
-0x00002550 : _mino_o
-0x000025B0 : _mino_t
-0x00002610 : (.text)
-0x00002610 : _HariStartup
-0x00000000 : (.data)
-0x00000000 : (.data)
-0x00000000 : (.data)
-0x00310000 : (.data)
-0x00310000 : (_table_rgb.1098)
-0x00310030 : _key_data
-0x00310040 : (.drectve)
-0x00310058 : (.rdata$zzz)
-0x0031005C : _count
-0x00310078 : (.data)
-0x00310078 : _e_gin
-0x0031007C : _e_gp2
-0x00310080 : _e_gp1
-0x00310084 : _e_time
-0x00310088 : _e_sw3
-0x0031008C : _e_sw2
-0x00310090 : _e_sw1
-0x00310094 : _e_vram
-0x00310098 : (.rdata)
-0x003100B0 : (.drectve)
-0x00310100 : (.rdata$zzz)
-0x00310104 : _state
-0x00310114 : _f
-0x00310120 : (.rdata)
-0x00310120 : (_e_number)
-0x003102E0 : _map
-0x003102FC : _m
-0x00310620 : (_e_char)
-0x00311320 : (.rdata$zzz)
-0x00311340 : (.rdata$zzz)
-0x00000000 : (.bss)
-0x00000000 : (.bss)
-0x00000000 : (.bss)
-0x00000000 : (.bss)
-0x00000000 : (.bss)
+Allocating common symbols
+Common symbol       size              file
+
+map                 0x1e0             main.o
+f                   0x14              main.o
+state               0x4               main.o
+count               0x4               bootpack.o
+m                   0x1fc             main.o
+
+Discarded input sections
+
+ .eh_frame      0x0000000000000000      0x39c bootpack.o
+ .eh_frame      0x0000000000000000       0xd0 mylib.o
+ .eh_frame      0x0000000000000000      0x1b4 func.o
+ .eh_frame      0x0000000000000000       0x74 main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.head           0x0000000000000000       0x24
+                0x0000000000000000        0x4 LONG 0x2f2000 (((ADDR (.bss) + SIZEOF (.bss)) + 0xfff) & 0xfffffffffffff000)
+                0x0000000000000004        0x4 LONG 0x69726148
+                0x0000000000000008        0x4 LONG 0x0
+                0x000000000000000c        0x4 LONG 0x2f0000 ADDR (.data)
+                0x0000000000000010        0x4 LONG 0x126c SIZEOF (.data)
+                0x0000000000000014        0x4 LONG 0x2534 LOADADDR (.data)
+                0x0000000000000018        0x4 LONG 0xe9000000
+                0x000000000000001c        0x4 LONG 0x2d0 (HariMain - 0x20)
+                0x0000000000000020        0x4 LONG 0x2f1680 (((ADDR (.bss) + SIZEOF (.bss)) + 0xf) & 0xfffffffffffffff0)
+
+.text           0x0000000000000030     0x2504
+ *(.text)
+ .text          0x0000000000000030       0x9d naskfunc.o
+                0x0000000000000030                io_hlt
+                0x0000000000000032                io_cli
+                0x0000000000000034                io_sti
+                0x0000000000000036                io_stihlt
+                0x0000000000000039                io_in8
+                0x0000000000000044                io_in16
+                0x0000000000000050                io_in32
+                0x0000000000000056                io_out8
+                0x0000000000000060                io_out16
+                0x000000000000006b                io_out32
+                0x0000000000000075                io_load_eflags
+                0x0000000000000078                io_store_eflags
+                0x000000000000007f                load_gdtr
+                0x000000000000008f                load_idtr
+                0x000000000000009f                asm_inthandler20
+                0x00000000000000b6                asm_inthandler21
+ *fill*         0x00000000000000cd        0x3 
+ .text          0x00000000000000d0      0x597 bootpack.o
+                0x00000000000000d0                init_palette
+                0x0000000000000170                set_palette
+                0x0000000000000210                init_gdtidt
+                0x00000000000002f0                HariMain
+                0x0000000000000490                set_segmdesc
+                0x00000000000004f0                set_gatedesc
+                0x0000000000000520                init_pic
+                0x00000000000005d0                inthandler21
+                0x0000000000000610                init_pit
+                0x0000000000000650                inthandler20
+ *fill*         0x0000000000000667        0x9 
+ .text          0x0000000000000670      0x296 mylib.o
+                0x0000000000000670                mylib_putpic
+                0x0000000000000700                mylib_putc
+                0x00000000000007d0                mylib_putnum
+                0x00000000000008a0                mylib_msleep
+                0x00000000000008e0                mylib_clear
+ *fill*         0x0000000000000906        0xa 
+ .text          0x0000000000000910     0x1203 func.o
+                0x0000000000000910                mino_clear
+                0x0000000000000cb0                map_clear
+                0x0000000000001110                putblock
+                0x0000000000001240                putmino
+                0x00000000000013c0                putgrid
+                0x0000000000001460                putmap
+                0x00000000000015c0                judge_set
+                0x0000000000001990                rotate_mino
+                0x0000000000001a60                mino_o
+                0x0000000000001ac0                mino_t
+ *fill*         0x0000000000001b13        0xd 
+ .text          0x0000000000001b20      0xa14 main.o
+                0x0000000000001b20                MieruEmb_main
+
+.data           0x00000000002f0000     0x126c load address 0x0000000000002534
+ *(.rodata*)
+ .rodata        0x00000000002f0000     0x1200 mylib.o
+ .rodata        0x00000000002f1200       0x18 main.o
+ *(.data)
+ .data          0x00000000002f1218       0x33 bootpack.o
+                0x00000000002f1248                key_data
+ *fill*         0x00000000002f124b        0x1 
+ .data          0x00000000002f124c        0x0 mylib.o
+ .data          0x00000000002f124c        0x0 func.o
+ .data          0x00000000002f124c       0x20 main.o
+                0x00000000002f124c                e_gin
+                0x00000000002f1250                e_gp2
+                0x00000000002f1254                e_gp1
+                0x00000000002f1258                e_time
+                0x00000000002f125c                e_sw3
+                0x00000000002f1260                e_sw2
+                0x00000000002f1264                e_sw1
+                0x00000000002f1268                e_vram
+
+.bss            0x00000000002f1280      0x400 load address 0x00000000000037a0
+ *(.bss)
+ .bss           0x00000000002f1280        0x0 bootpack.o
+ .bss           0x00000000002f1280        0x0 mylib.o
+ .bss           0x00000000002f1280        0x0 func.o
+ .bss           0x00000000002f1280        0x0 main.o
+ COMMON         0x00000000002f1280        0x4 bootpack.o
+                0x00000000002f1280                count
+ COMMON         0x00000000002f1284      0x3fc main.o
+                0x00000000002f1284                map
+                0x00000000002f1464                f
+                0x00000000002f1478                state
+                0x00000000002f1484                m
+
+/DISCARD/
+ *(.eh_frame)
+LOAD naskfunc.o
+LOAD bootpack.o
+LOAD mylib.o
+LOAD func.o
+LOAD main.o
+OUTPUT(bootpack.bim binary)
+
+.comment        0x0000000000000000       0xb0
+ .comment       0x0000000000000000       0x2c bootpack.o
+ .comment       0x000000000000002c       0x2c mylib.o
+ .comment       0x0000000000000058       0x2c func.o
+ .comment       0x0000000000000084       0x2c main.o
+
+.note.GNU-stack
+                0x0000000000000000        0x0
+ .note.GNU-stack
+                0x0000000000000000        0x0 bootpack.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 mylib.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 func.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 main.o
