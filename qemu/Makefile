@@ -1,4 +1,5 @@
 TARGET = tetris
+TARGET_BIN = $(TARGET).bin
 TARGET_SYS = $(TARGET).sys
 TARGET_IMG = $(TARGET).img
 
@@ -8,25 +9,14 @@ OBJS += mylib.o
 OBJS += func.o
 OBJS += main.o
 
-TOOLPATH = ../../z_tools/
-INCPATH  = ../../z_tools/haribote/
-
-#ARCH	 = i686-w64-mingw32-
-GCC		 = $(ARCH)gcc
-LD		 = $(ARCH)ld
-STRIP	 = $(ARCH)strip
+GCC		 = gcc
+LD		 = ld
 MAKE     = make
 NASM     = nasm
-OBJ2BIM  = $(TOOLPATH)obj2bim.exe
-BIM2HRB  = $(TOOLPATH)bim2hrb.exe
-RULEFILE = $(TOOLPATH)haribote/haribote.rul
-EDIMG    = $(TOOLPATH)edimg.exe
 RM       = rm -rf
 
 CFLAGS	 = -m32 -nostdlib -Wall -fno-builtin -O3 -DHOST_CYGWIN -fno-pie
 LDFLAGS  = -Map bootpack.map -T bootpack.ld -m elf_i386 -static
-#LDFLAGS += --ignore-unresolved-symbol _GLOBAL_OFFSET_TABLE_
-#LDFLAGS += -e HariMain--oformat binary
 
 # デフォルト動作
 
@@ -44,24 +34,15 @@ asmhead.bin : asmhead.nas
 naskfunc.o : naskfunc.nas
 	$(NASM) -felf -o naskfunc.o naskfunc.nas
 
-bootpack.bim : $(OBJS)
-	$(LD) $(LDFLAGS) -o bootpack.bim $(OBJS)
-#	$(STRIP) -O binary bootpack.bim
-#	$(OBJ2BIM) @$(RULEFILE) out:bootpack.bim stack:3136k map:bootpack.map $(OBJS)
-# 3MB+64KB=3136KB
+$(TARGET_BIN) : $(OBJS)
+	$(LD) $(LDFLAGS) -o $(TARGET_BIN) $(OBJS)
 
-bootpack.hrb : bootpack.bim
-#	$(BIM2HRB) bootpack.bim bootpack.hrb 0
-
-$(TARGET_SYS) : asmhead.bin bootpack.bim
-	cat asmhead.bin bootpack.bim > $(TARGET_SYS)
-#	copy /B asmhead.bin+bootpack.hrb $(TARGET_SYS)
+$(TARGET_SYS) : asmhead.bin $(TARGET_BIN)
+	cat asmhead.bin $(TARGET_BIN) > $(TARGET_SYS)
 
 $(TARGET_IMG) : ipl10.bin $(TARGET_SYS) Makefile
-	$(EDIMG)   imgin:../../z_tools/fdimg0at.tek \
-		wbinimg src:ipl10.bin len:512 from:0 to:0 \
-		copy from:$(TARGET_SYS) to:@: \
-		imgout:$(TARGET_IMG)
+	mformat -f 1440 -C -B ipl10.bin -i $(TARGET_IMG) ::
+	mcopy $(TARGET_SYS) -i $(TARGET_IMG) ::
 
 # 一般規則
 
@@ -78,7 +59,7 @@ clean :
 	-$(RM) *.o
 	-$(RM) *.gas
 	-$(RM) bootpack.map
-	-$(RM) bootpack.bim
+	-$(RM) bootpack.bin
 	-$(RM) bootpack.hrb
 	-$(RM) $(TARGET_SYS)
 

@@ -129,7 +129,7 @@ LOAD bootpack.o
 LOAD mylib.o
 LOAD func.o
 LOAD main.o
-OUTPUT(bootpack.bim binary)
+OUTPUT(tetris.bin binary)
 
 .comment        0x0000000000000000       0xb0
  .comment       0x0000000000000000       0x2c bootpack.o
