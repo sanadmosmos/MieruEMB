@@ -60,7 +60,7 @@ int main()
 					break;
 				}
 				f.set = judge_set(&map, &m);
-		        putmino(&m);
+		        deletemino(&m);
 				// if push rotate
 				if (*e_sw2 == 0 && f.rotate == 0) {
 					rotate_mino(&m);
@@ -69,7 +69,7 @@ int main()
 				if (*e_sw2 == 1 && f.rotate != 0)
 					f.rotate = 0;
 				// if push left
-				tmp = m.x + m.l; // most left
+				tmp = m.x; // most left
 				if (*e_sw1 == 0 && tmp >= 1 && f.xl == 0) {
 					m.x--;
 					f.xl = 1;
@@ -77,7 +77,7 @@ int main()
 				if (*e_sw1 == 1 && f.xl != 0)
 					f.xl = 0;
 				// if push right
-				tmp = m.x + m.r; // most right
+				tmp = m.x; // most right
 		        if (*e_sw3 == 0 && tmp <= 8 && f.xr == 0) {
 					m.x++;
 					f.xr = 1;
@@ -87,21 +87,15 @@ int main()
 		
 				if (f.fall > 50) {
 					f.fall = 0;
-					if (m.y > 9) {
-					} else {
-						m.y++;
-					}
+					m.y++;
 				}
 				f.fall++;
+		        putmino(&m);
 				break;
 
 			case SET:
-				for (i = 0; i < M_HEIGHT; i++) {
-					for (j = 0; j < M_WIDTH; j++) {
-						if (m.data[i][j] == 1) {
-							map[m.y+i][m.x+j] = m.color;
-						}
-					}
+				for (i = 0; i < NUM_OF_BLOCK; i++) {
+					map[m.y+m.data[i].y][m.x+m.data[i].x] = m.color;
 				}
 				putmap(&map);
 				state = NEW_BLOCK;

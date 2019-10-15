@@ -3,7 +3,7 @@
 
 #define QEMU
 #ifdef QEMU
-#include "qemu/bootpack.h"
+#include "qemu_programs/bootpack.h"
 #endif
 
 /* tetris.c */
@@ -13,9 +13,14 @@
 #define M_HEIGHT 	4
 #define P_WIDTH  	10
 #define P_HEIGHT 	12
+#define NUM_OF_BLOCK 4
 
 typedef struct {
-	unsigned int data[P_HEIGHT][P_WIDTH];
+	int x, y;
+} block;
+
+typedef struct {
+	block data[4];
 	int color;
 	int x, y;
 	int l, t, r, b;

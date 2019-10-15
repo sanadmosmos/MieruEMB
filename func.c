@@ -12,10 +12,11 @@ extern volatile char *e_gin;
 /**********************************************************************/
 void mino_clear(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++)
-		for (j = 0; j < P_HEIGHT; j++)
-			m->data[i][j] = 0;
+	int i;
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		m->data[i].x = 0;
+		m->data[i].y = 0;
+	}
 }
 
 /**********************************************************************/
@@ -46,14 +47,18 @@ void putblock(int x, int y, int color)
 /**********************************************************************/
 void putmino(mino *m)
 {
-    int i,j;
-	
-    for(i=0; i<M_HEIGHT-1; i++) {
-        for(j=0; j<M_WIDTH-1; j++) {
-			//if (m->data[i][j] == 1) {
-				putblock(m->x+j, m->y+i, m->color * m->data[i][j]);
-			//}
-		}
+    int i;
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		putblock(m->x + m->data[i].x, m->y + m->data[i].y, m->color);
+	}
+}
+
+/**********************************************************************/
+void deletemino(mino *m)
+{
+	int i;
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		putblock(m->x + m->data[i].x, m->y + m->data[i].y, 0);
 	}
 }
 
@@ -87,8 +92,11 @@ int judge_set(int a[][10], mino *m)
 	int bottom = 0;
 	int tmp = 0;
 
-	tmp = m->b + m->y;
-	if (tmp >= 12) {
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		bottom = (m->data[i].y > bottom) ? m->data[i].y : bottom;
+	}
+	tmp = m->y + bottom;
+	if (tmp >= 11) {
 		return 1;
 	}
 
@@ -102,9 +110,11 @@ int judge_set(int a[][10], mino *m)
 	//if ()
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
+		/*
 			if (m->data[i][j] == 1 && m->data[i+1][j] == 0 && a[m->x+j+1][m->y+i] == 1) {
 				return 1;
 			}
+			*/
 		}
 	}
 	return 0;
@@ -123,38 +133,8 @@ void rotate_mino(mino *m)
 		case MINO_J:
 		case MINO_T:
 		case MINO_L:
-			tmp = m->data[1][0];
-			m->data[1][0] = m->data[1][2];
-			m->data[1][2] = m->data[3][2];
-			m->data[3][2] = m->data[3][0];
-			m->data[3][0] = tmp;
-			tmp = m->data[1][1];
-			m->data[1][1] = m->data[2][2];
-			m->data[2][2] = m->data[3][1];
-			m->data[3][1] = m->data[2][0];
-			m->data[2][0] = tmp;
 			break;
 		case MINO_I:
-			tmp = m->data[0][0];
-			m->data[0][0] = m->data[0][3];
-			m->data[0][3] = m->data[3][3];
-			m->data[3][3] = m->data[3][0];
-			m->data[3][0] = m->data[0][0];
-			tmp = m->data[0][1];
-			m->data[0][1] = m->data[1][3];
-			m->data[1][3] = m->data[3][2];
-			m->data[3][2] = m->data[2][0];
-			m->data[2][0] = m->data[0][1];
-			tmp = m->data[0][2];
-			m->data[0][2] = m->data[2][3];
-			m->data[2][3] = m->data[3][1];
-			m->data[3][1] = m->data[1][0];
-			m->data[1][0] = m->data[0][2];
-			tmp = m->data[1][1];
-			m->data[1][1] = m->data[1][2];
-			m->data[1][2] = m->data[2][2];
-			m->data[2][2] = m->data[2][1];
-			m->data[2][1] = m->data[1][1];
 			break;
 		default:
 			break;
@@ -165,27 +145,39 @@ void rotate_mino(mino *m)
 void mino_o(mino *m)
 {
 	m->color = MINO_O;
-	m->data[1][1] = 1;
-	m->data[1][2] = 1;
-	m->data[2][1] = 1;
-	m->data[2][2] = 1;
+	m->data[0].x =  0;
+	m->data[0].y =  0;
+	m->data[1].x =  0;
+	m->data[1].y =  1;
+	m->data[2].x =  1;
+	m->data[2].y =  1;
+	m->data[3].x =  1;
+	m->data[3].y =  0;
+	/*
 	m->l = 1;
 	m->t = 1;
 	m->r = 2;
 	m->b = 2;
+	*/
 }
 
 void mino_t(mino *m)
 {
 	m->color = MINO_T;
-	m->data[0][1] = 1;
-	m->data[1][0] = 1;
-	m->data[1][1] = 1;
-	m->data[1][2] = 1;
+	m->data[0].x =  0;
+	m->data[0].y =  0;
+	m->data[1].x =  0;
+	m->data[1].y = -1;
+	m->data[2].x = -1;
+	m->data[2].y =  0;
+	m->data[3].x =  1;
+	m->data[3].y =  0;
+	/*
 	m->l = 0;
 	m->t = 1;
 	m->r = 2;
 	m->b = 2;
+	*/
 }
 
 /*
