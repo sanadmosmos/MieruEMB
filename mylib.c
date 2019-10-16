@@ -10,9 +10,6 @@ extern volatile char *e_sw2;
 extern volatile char *e_sw3;
 extern volatile char *e_gin;
 
-#ifdef QEMU
-extern int count;
-#endif
 
 /**********************************************************************/
 void mylib_putpic(int x, int y, int width, int height,  
@@ -21,7 +18,7 @@ void mylib_putpic(int x, int y, int width, int height,
 
     for(i=0; i<height; i++)
         for(j=0; j<width; j++)
-            e_vram[(x+j) + (y+i)*128] =  data[i][j];
+            e_vram[(x+j) + (y+i)*LCD_WIDTH] =  data[i][j];
 }
 
 /**********************************************************************/
@@ -31,7 +28,7 @@ void mylib_putc(int x, int y, char c, int color){
     for(i=0; i<16; i++){
         for(j=0; j<8; j++){
             if(e_char[(int)(c-'A')][i][j]) 
-                e_vram[(x+j)+(y+i)*128] = color;
+                e_vram[(x+j)+(y+i)*LCD_WIDTH] = color;
         }
     }
 }
@@ -41,7 +38,7 @@ void mylib_putnum(int x, int y, int num, int color){
     
     for(i=0; i<16; i++){
         for(j=0; j<8; j++){
-            if(e_number[num][i][j]) e_vram[(x+j)+(y+i)*128] = color;
+            if(e_number[num][i][j]) e_vram[(x+j)+(y+i)*LCD_WIDTH] = color;
         }
     }
 }
@@ -62,6 +59,6 @@ void mylib_msleep(unsigned int tm){
 /**********************************************************************/
 void mylib_clear(int color){
     int i;
-    for(i=0; i<128*128; i++) e_vram[i] = color;
+    for(i=0; i<LCD_HEIGHT*LCD_WIDTH; i++) e_vram[i] = color;
 }
 

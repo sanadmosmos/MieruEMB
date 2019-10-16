@@ -80,9 +80,15 @@ struct GATE_DESCRIPTOR {
 #define PIC1_ICW4		0x00a1
 
 #define PORT_KEYDAT		0x0060
-#define KEY_Q			0x10
-#define KEY_W			0x11
-#define KEY_E			0x12
+
+#define KEY_Q_PRESS		0x10
+#define KEY_Q_RELEASE	0x90
+#define KEY_W_PRESS		0x11
+#define KEY_W_RELEASE	0x91
+#define KEY_E_PRESS		0x12
+#define KEY_E_RELEASE	0x92
+#define KEY_ON			0
+#define	KEY_OFF			1
 
 /* timer.c */
 struct TIMERCTL {

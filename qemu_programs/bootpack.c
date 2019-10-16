@@ -58,7 +58,8 @@ void HariMain(void)
 	e_sw3 = &key_data[2];
 	e_vram = binfo->vram;
 
-	MieruEmb_main();
+	//MieruEmb_main();
+	main();
 }
 
 
@@ -196,9 +197,28 @@ void inthandler21(int *esp)
 	io_out8(PIC0_OCW2, 0x61);
 	data = io_in8(PORT_KEYDAT);
 	
-	*e_sw1 = (data == KEY_Q) ? 0 : 1;
-	*e_sw2 = (data == KEY_W) ? 0 : 1;
-	*e_sw3 = (data == KEY_E) ? 0 : 1;
+	switch (data) {
+		case KEY_Q_PRESS:
+			*e_sw1 = KEY_ON;
+			break;
+		case KEY_Q_RELEASE:
+			*e_sw1 = KEY_OFF;
+			break;
+		case KEY_W_PRESS:
+			*e_sw2 = KEY_ON;
+			break;
+		case KEY_W_RELEASE:
+			*e_sw2 = KEY_OFF;
+			break;
+		case KEY_E_PRESS:
+			*e_sw3 = KEY_ON;
+			break;
+		case KEY_E_RELEASE:
+			*e_sw3 = KEY_OFF;
+			break;
+		default:
+			break;
+	}
 	return;
 }
 

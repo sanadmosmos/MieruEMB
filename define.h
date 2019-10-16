@@ -2,18 +2,24 @@
 #define __DEFINE_H__
 
 #define QEMU
+
 #ifdef QEMU
-#include "qemu_programs/bootpack.h"
+	#include "qemu_programs/bootpack.h"
+	#define LCD_WIDTH	320
+	#define LCD_HEIGHT	200
+	extern int count;
+#else
+	#define LCD_WIDTH	128
+	#define LCD_HEIGHT	128
 #endif
 
-/* tetris.c */
-#define LCD_WIDTH	320
-#define LCD_HEIGHT	200
+
 #define M_WIDTH  	4
 #define M_HEIGHT 	4
 #define P_WIDTH  	10
 #define P_HEIGHT 	12
 #define NUM_OF_BLOCK 4
+#define SENSITIVITY 2
 
 typedef struct {
 	int x, y;
@@ -23,11 +29,11 @@ typedef struct {
 	block data[4];
 	int color;
 	int x, y;
-	int l, t, r, b;
 } mino;
 
 typedef struct {
 	int xl, xr;
+	int xledge, xredge;
 	int set;
 	int fall;
 	int rotate;
@@ -42,17 +48,17 @@ typedef enum {
 	END
 } STATES;
 
-#ifdef QEMU
-int MieruEmb_main();
-#endif
+int main();
 void mino_clear(mino *m);
 void map_clear(int a[][10]);
-void putblock(int x, int y, int color);
-void putmino(mino *m);
-void putgrid();
-void putmap(int a[][10]);
+void put_block(int x, int y, int color);
+void put_mino(mino *m);
+void delete_mino(mino *m);
+void put_grid();
+void put_map(int a[][10]);
 int judge_set(int a[][10], mino *m);
 void rotate_mino(mino *m);
+void new_mino(mino *m);
 void mino_o(mino *m);
 void mino_t(mino *m);
 void mino_s(mino *m);
@@ -61,13 +67,13 @@ void mino_l(mino *m);
 void mino_j(mino *m);
 void mino_i(mino *m);
 
-#define MINO_Z 1
-#define MINO_S 2
-#define MINO_O 3
-#define MINO_J 4
-#define MINO_T 5
-#define MINO_I 6
-#define MINO_L 7
+#define MINO_Z 1 // red
+#define MINO_S 2 // green
+#define MINO_O 3 // yellow
+#define MINO_J 4 // blue
+#define MINO_T 5 // purple
+#define MINO_I 6 // light blue
+#define MINO_L 7 // white
 
 #define OFFSET 10
 

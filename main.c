@@ -15,17 +15,13 @@ volatile char *e_gin  = (char*)0x8001ff;
 
 /**********************************************************************/
 
-int map[12][10];
+int map[P_HEIGHT][P_WIDTH];
 STATES state;
 mino m;
 flag f;
 
 /**********************************************************************/
-#ifdef QEMU
-int MieruEmb_main()
-#else
 int main()
-#endif
 {
 	int i, j;
 	int tmp;
@@ -35,32 +31,37 @@ int main()
     while(1){
 		switch (state) {
 			case INIT:
-				for (i = 0; i < 12; i++) {
-					for (j = 0; j < 10; j++) {
+				for (i = 0; i < P_HEIGHT; i++) {
+					for (j = 0; j < P_WIDTH; j++) {
 						map[i][j] = 0;
 					}
 				}
     			mylib_clear(0);
-				putgrid();
+				put_grid();
 				mino_clear(&m);
 				state = NEW_BLOCK;
 				break;
 
 			case NEW_BLOCK:
-				mino_t(&m);
+				new_mino(&m);
 				m.x = 4;
 				m.y = 0;
 				state = FALL;
 				break;
 
 			case FALL:
-				if (f.set == 1) {
-					f.set = 0;
-					state = SET;
-					break;
+		        delete_mino(&m);
+				if (f.fall > 20) {
+					f.fall = 0;
+					m.y++;
+					if (f.set == 1) {
+						f.set = 0;
+						m.y--;
+						state = SET;
+						break;
+					}
 				}
-				f.set = judge_set(&map, &m);
-		        deletemino(&m);
+				f.fall++;
 				// if push rotate
 				if (*e_sw2 == 0 && f.rotate == 0) {
 					rotate_mino(&m);
@@ -68,36 +69,37 @@ int main()
 				}
 				if (*e_sw2 == 1 && f.rotate != 0)
 					f.rotate = 0;
+
+				if (f.xl != 0 && f.xredge == 1)
+					f.xl = 0;
 				// if push left
-				tmp = m.x; // most left
-				if (*e_sw1 == 0 && tmp >= 1 && f.xl == 0) {
-					m.x--;
-					f.xl = 1;
+				if (*e_sw1 == 0 && f.xredge == 0) {
+					f.xledge = (f.xl == 0) ? 1 : 0;
+					if ((f.xl % SENSITIVITY) == 0)
+						m.x--;
+					f.xl++;
 				}
 				if (*e_sw1 == 1 && f.xl != 0)
 					f.xl = 0;
 				// if push right
-				tmp = m.x; // most right
-		        if (*e_sw3 == 0 && tmp <= 8 && f.xr == 0) {
-					m.x++;
-					f.xr = 1;
+		        if (*e_sw3 == 0 && f.xledge == 0) {
+					f.xredge = (f.xr == 0) ? 1 : 0;
+					if ((f.xr % SENSITIVITY) == 0)
+						m.x++;
+					f.xr++;
 				}
 				if (*e_sw3 == 1 && f.xr != 0)
 					f.xr = 0;
 		
-				if (f.fall > 50) {
-					f.fall = 0;
-					m.y++;
-				}
-				f.fall++;
-		        putmino(&m);
+				f.set = judge_set(&map, &m);
+		        put_mino(&m);
 				break;
 
 			case SET:
 				for (i = 0; i < NUM_OF_BLOCK; i++) {
 					map[m.y+m.data[i].y][m.x+m.data[i].x] = m.color;
 				}
-				putmap(&map);
+				put_map(&map);
 				state = NEW_BLOCK;
 				break;
 

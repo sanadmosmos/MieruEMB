@@ -29,7 +29,7 @@ void map_clear(int a[][10])
 }
 
 /**********************************************************************/
-void putblock(int x, int y, int color)
+void put_block(int x, int y, int color)
 {
 	int i, j;
 	int tmpx, tmpy;
@@ -45,25 +45,24 @@ void putblock(int x, int y, int color)
 }
 
 /**********************************************************************/
-void putmino(mino *m)
+void put_mino(mino *m)
 {
     int i;
 	for (i = 0; i < NUM_OF_BLOCK; i++) {
-		putblock(m->x + m->data[i].x, m->y + m->data[i].y, m->color);
+		put_block(m->x + m->data[i].x, m->y + m->data[i].y, m->color);
 	}
 }
 
-/**********************************************************************/
-void deletemino(mino *m)
+void delete_mino(mino *m)
 {
 	int i;
 	for (i = 0; i < NUM_OF_BLOCK; i++) {
-		putblock(m->x + m->data[i].x, m->y + m->data[i].y, 0);
+		put_block(m->x + m->data[i].x, m->y + m->data[i].y, 0);
 	}
 }
 
 /**********************************************************************/
-void putgrid()
+void put_grid()
 {
 	int i, j;
 	for (i = 0; i <= 120; i++) {
@@ -75,12 +74,12 @@ void putgrid()
 }
 
 /**********************************************************************/
-void putmap(int a[][10])
+void put_map(int a[][10])
 {
 	int i, j;
 	for (i = 0; i < P_HEIGHT; i++) {
 		for (j = 0; j < P_WIDTH; j++) {
-			putblock(j, i, a[i][j]);
+			put_block(j, i, a[i][j]);
 		}
 	}
 }
@@ -89,42 +88,52 @@ void putmap(int a[][10])
 int judge_set(int a[][10], mino *m)
 {
 	int i, j;
-	int bottom = 0;
+	int bottom = 0, left = 0, right = 0;
 	int tmp = 0;
 
 	for (i = 0; i < NUM_OF_BLOCK; i++) {
 		bottom = (m->data[i].y > bottom) ? m->data[i].y : bottom;
+		left = (m->data[i].x < left) ? m->data[i].x : left;
+		right = (m->data[i].x > right) ? m->data[i].x : right;
 	}
-	tmp = m->y + bottom;
-	if (tmp >= 11) {
+	while ((m->x + left) < 0)
+		m->x += 1;
+	while ((m->x + right) > 9)
+		m->x -= 1;
+	if ((m->y + bottom) >= (P_HEIGHT - 1)) {
 		return 1;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
-			//if (m->data[][]
-			//if (bottom < 
-			//	bottom = 
-		}
-	}
-	//if ()
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) {
-		/*
-			if (m->data[i][j] == 1 && m->data[i+1][j] == 0 && a[m->x+j+1][m->y+i] == 1) {
-				return 1;
-			}
-			*/
-		}
-	}
+
 	return 0;
 }
 
 /**********************************************************************/
+void rotate(int *x, int *y, float ox, float oy)
+{
+	float tmp_x, tmp_y;
+	float tmp;
+
+	tmp_x = (float)*x;
+	tmp_y = (float)*y;
+
+	tmp_x -= ox;
+	tmp_y -= oy;
+
+	tmp = tmp_x;
+	tmp_x = tmp_y;
+	tmp_y = -1 * tmp;
+	
+	tmp_x += ox;
+	tmp_y += oy;
+
+	*x = (int)tmp_x;
+	*y = (int)tmp_y;
+}
+
 void rotate_mino(mino *m)
 {
-	int i, j;
-	int tmp;
+	int i;
 	switch (m->color) {
 		case MINO_O:
 			break;
@@ -133,8 +142,14 @@ void rotate_mino(mino *m)
 		case MINO_J:
 		case MINO_T:
 		case MINO_L:
+			for (i = 0; i < NUM_OF_BLOCK; i++) {
+				rotate(&m->data[i].x, &m->data[i].y, 0, 0);
+			}
 			break;
 		case MINO_I:
+			for (i = 0; i < NUM_OF_BLOCK; i++) {
+				rotate(&m->data[i].x, &m->data[i].y, 0.5, 0.5);
+			}
 			break;
 		default:
 			break;
@@ -142,107 +157,99 @@ void rotate_mino(mino *m)
 }
 
 /**********************************************************************/
-void mino_o(mino *m)
+void new_mino(mino *m)
 {
-	m->color = MINO_O;
-	m->data[0].x =  0;
-	m->data[0].y =  0;
-	m->data[1].x =  0;
-	m->data[1].y =  1;
-	m->data[2].x =  1;
-	m->data[2].y =  1;
-	m->data[3].x =  1;
-	m->data[3].y =  0;
-	/*
-	m->l = 1;
-	m->t = 1;
-	m->r = 2;
-	m->b = 2;
-	*/
+	static int count_mino = 0;
+	switch (count_mino) {
+		case 0:
+			mino_o(m);
+			break;
+		case 1:
+			mino_t(m);
+			break;
+		case 2:
+			mino_l(m);
+			break;
+		case 3:
+			mino_j(m);
+			break;
+		case 4:
+			mino_z(m);
+			break;
+		case 5:
+			mino_s(m);
+			break;
+		case 6:
+			mino_i(m);
+			break;
+		default:
+			break;
+	}
+	count_mino++;
+	count_mino %= 7;
 }
 
+/**********************************************************************/
 void mino_t(mino *m)
 {
 	m->color = MINO_T;
-	m->data[0].x =  0;
-	m->data[0].y =  0;
-	m->data[1].x =  0;
-	m->data[1].y = -1;
-	m->data[2].x = -1;
-	m->data[2].y =  0;
-	m->data[3].x =  1;
-	m->data[3].y =  0;
-	/*
-	m->l = 0;
-	m->t = 1;
-	m->r = 2;
-	m->b = 2;
-	*/
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x =  0;	m->data[1].y = -1;
+	m->data[2].x = -1;	m->data[2].y =  0;
+	m->data[3].x =  1;	m->data[3].y =  0;
 }
 
-/*
-void mino_z(unsigned int data[][P_WIDTH])
+void mino_o(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
-			if () {
-			} else {
-				data[i][j] = 7;
-			}
-		}
-	}
+	m->color = MINO_O;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x =  0;	m->data[1].y =  1;
+	m->data[2].x =  1;	m->data[2].y =  1;
+	m->data[3].x =  1;	m->data[3].y =  0;
 }
 
-void mino_s(unsigned int data[][P_WIDTH])
+void mino_l(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
-			if () {
-			} else {
-				data[i][j] = 7;
-			}
-		}
-	}
+	m->color = MINO_L;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x = -1;	m->data[1].y =  0;
+	m->data[2].x =  1;	m->data[2].y =  0;
+	m->data[3].x =  1;	m->data[3].y = -1;
 }
 
-void mino_l(unsigned int data[][P_WIDTH])
+void mino_j(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
-			if () {
-			} else {
-				data[i][j] = 7;
-			}
-		}
-	}
+	m->color = MINO_J;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x = -1;	m->data[1].y =  0;
+	m->data[2].x = -1;	m->data[2].y = -1;
+	m->data[3].x =  1;	m->data[3].y =  0;
 }
 
-void mino_j(unsigned int data[][P_WIDTH])
+void mino_s(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
-			if () {
-			} else {
-				data[i][j] = 7;
-			}
-		}
-	}
+	m->color = MINO_S;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x = -1;	m->data[1].y =  0;
+	m->data[2].x =  0;	m->data[2].y = -1;
+	m->data[3].x =  1;	m->data[3].y = -1;
 }
 
-void mino_i(unsigned int data[][P_WIDTH])
+void mino_z(mino *m)
 {
-	int i, j;
-	for (i = 0; i < P_WIDTH; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
-			if () {
-			} else {
-				data[i][j] = 7;
-			}
-		}
-	}
+	m->color = MINO_Z;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x =  0;	m->data[1].y = -1;
+	m->data[2].x = -1;	m->data[2].y = -1;
+	m->data[3].x =  1;	m->data[3].y =  0;
 }
-*/
+
+void mino_i(mino *m)
+{
+	m->color = MINO_I;
+	m->data[0].x =  0;	m->data[0].y =  0;
+	m->data[1].x = -1;	m->data[1].y =  0;
+	m->data[2].x =  1;	m->data[2].y =  0;
+	m->data[3].x =  2;	m->data[3].y =  0;
+}
+

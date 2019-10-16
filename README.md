@@ -12,4 +12,6 @@
 ### edimgに関する参考
 - mtools
 	- http://cyberbird.indiesj.com/x86%E3%80%80os%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80/?pageNo=3
+### アセンブラでnasmからGNUに変更する
+- https://github.com/horie-t/Aomushi
 
