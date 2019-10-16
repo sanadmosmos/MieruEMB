@@ -15,7 +15,7 @@ volatile char *e_gin  = (char*)0x8001ff;
 
 /**********************************************************************/
 
-int map[P_HEIGHT][P_WIDTH];
+int map[MAP_HEIGHT][MAP_WIDTH];
 STATES state;
 mino m;
 flag f;
@@ -31,11 +31,7 @@ int main()
     while(1){
 		switch (state) {
 			case INIT:
-				for (i = 0; i < P_HEIGHT; i++) {
-					for (j = 0; j < P_WIDTH; j++) {
-						map[i][j] = 0;
-					}
-				}
+				map_clear(map);
     			mylib_clear(0);
 				put_grid();
 				mino_clear(&m);
@@ -44,8 +40,6 @@ int main()
 
 			case NEW_BLOCK:
 				new_mino(&m);
-				m.x = 4;
-				m.y = 0;
 				state = FALL;
 				break;
 
@@ -70,28 +64,46 @@ int main()
 				if (*e_sw2 == 1 && f.rotate != 0)
 					f.rotate = 0;
 
-				if (f.xl != 0 && f.xredge == 1)
+				// move x
+				f.xledge = 0;
+				f.xredge = 0;
+				if (*e_sw1 == 0 && f.xl == 0) {
+					f.xledge = 1;
+					f.xlrmode |= 0b10;
+				}
+				if (*e_sw3 == 0 && f.xr == 0) {
+					f.xredge = 1;
+					f.xlrmode |= 0b01;
+				}
+				if (*e_sw1 == 1 && f.xl != 0) {
 					f.xl = 0;
-				// if push left
-				if (*e_sw1 == 0 && f.xredge == 0) {
-					f.xledge = (f.xl == 0) ? 1 : 0;
+					f.xlrmode &= 0b01;
+				}
+				if (*e_sw3 == 1 && f.xr != 0) {
+					f.xr = 0;
+					f.xlrmode &= 0b10;
+				}
+				if (*e_sw1 == 0)
+					f.xl++;
+				if (*e_sw3 == 0)
+					f.xr++;
+
+				if (f.xlrmode == 0b11 && (f.xledge || f.xredge)) {
+					if (f.xledge == 1)
+						f.xlrmode |= 0b1000;
+					if (f.xredge == 1)
+						f.xlrmode |= 0b0100;
+				} else if (f.xlrmode == 0b10 || (f.xlrmode & 0b1000) == 0b1000) {
+					// if push left
 					if ((f.xl % SENSITIVITY) == 0)
 						m.x--;
-					f.xl++;
-				}
-				if (*e_sw1 == 1 && f.xl != 0)
-					f.xl = 0;
-				// if push right
-		        if (*e_sw3 == 0 && f.xledge == 0) {
-					f.xredge = (f.xr == 0) ? 1 : 0;
+				} else if (f.xlrmode == 0b01 || (f.xlrmode & 0b0100) == 0b0100) {
+					// if push right
 					if ((f.xr % SENSITIVITY) == 0)
 						m.x++;
-					f.xr++;
-				}
-				if (*e_sw3 == 1 && f.xr != 0)
-					f.xr = 0;
+				} else;
 		
-				f.set = judge_set(&map, &m);
+				f.set = judge_set(map, &m);
 		        put_mino(&m);
 				break;
 
@@ -99,7 +111,7 @@ int main()
 				for (i = 0; i < NUM_OF_BLOCK; i++) {
 					map[m.y+m.data[i].y][m.x+m.data[i].x] = m.color;
 				}
-				put_map(&map);
+				put_map(map);
 				state = NEW_BLOCK;
 				break;
 
@@ -117,4 +129,4 @@ int main()
         mylib_msleep(20);
     }
 }
-/**********************************************************************/
+

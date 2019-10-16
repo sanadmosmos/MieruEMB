@@ -20,11 +20,11 @@ void mino_clear(mino *m)
 }
 
 /**********************************************************************/
-void map_clear(int a[][10])
+void map_clear(int a[][MAP_WIDTH])
 {
 	int i, j;
-	for (i = 0; i < 12; i++)
-		for (j = 0; j < 10; j++)
+	for (i = 0; i < MAP_HEIGHT; i++)
+		for (j = 0; j < MAP_WIDTH; j++)
 			a[i][j] = 0;
 }
 
@@ -33,10 +33,10 @@ void put_block(int x, int y, int color)
 {
 	int i, j;
 	int tmpx, tmpy;
-	tmpx = x*10 + OFFSET;
-	tmpy = y*10;
-	for (i = tmpx+1; i < tmpx+10; i++) {
-		for (j = tmpy+1; j < tmpy+10; j++) {
+	tmpx = x*BLOCK_SIZE + OFFSET;
+	tmpy = y*BLOCK_SIZE;
+	for (i = tmpx+1; i < tmpx+BLOCK_SIZE; i++) {
+		for (j = tmpy+1; j < tmpy+BLOCK_SIZE; j++) {
 			if (i >= LCD_WIDTH || i >= LCD_HEIGHT)
 				continue;
 			e_vram[j*LCD_WIDTH+i] = color;
@@ -65,27 +65,27 @@ void delete_mino(mino *m)
 void put_grid()
 {
 	int i, j;
-	for (i = 0; i <= 120; i++) {
-		for (j = 0; j <= 100; j++) {
-			if (((i % 10) == 0) || ((j % 10) == 0))
+	for (i = 0; i <= MAP_HEIGHT * BLOCK_SIZE; i++) {
+		for (j = 0; j <= MAP_WIDTH * BLOCK_SIZE; j++) {
+			if (((i % BLOCK_SIZE) == 0) || ((j % BLOCK_SIZE) == 0))
 				e_vram[OFFSET+i*LCD_WIDTH+j] = 7;
 		}
 	}
 }
 
 /**********************************************************************/
-void put_map(int a[][10])
+void put_map(int a[][MAP_WIDTH])
 {
 	int i, j;
-	for (i = 0; i < P_HEIGHT; i++) {
-		for (j = 0; j < P_WIDTH; j++) {
+	for (i = 0; i < MAP_HEIGHT; i++) {
+		for (j = 0; j < MAP_WIDTH; j++) {
 			put_block(j, i, a[i][j]);
 		}
 	}
 }
 
 /**********************************************************************/
-int judge_set(int a[][10], mino *m)
+int judge_set(int a[][MAP_WIDTH], mino *m)
 {
 	int i, j;
 	int bottom = 0, left = 0, right = 0;
@@ -100,7 +100,7 @@ int judge_set(int a[][10], mino *m)
 		m->x += 1;
 	while ((m->x + right) > 9)
 		m->x -= 1;
-	if ((m->y + bottom) >= (P_HEIGHT - 1)) {
+	if ((m->y + bottom) >= (MAP_HEIGHT - 1)) {
 		return 1;
 	}
 
@@ -187,6 +187,8 @@ void new_mino(mino *m)
 	}
 	count_mino++;
 	count_mino %= 7;
+	m->x = 4;
+	m->y = 0;
 }
 
 /**********************************************************************/

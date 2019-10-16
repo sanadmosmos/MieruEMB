@@ -1,25 +1,22 @@
 #ifndef __DEFINE_H__
 #define __DEFINE_H__
 
-#define QEMU
-
 #ifdef QEMU
-	#include "qemu_programs/bootpack.h"
 	#define LCD_WIDTH	320
 	#define LCD_HEIGHT	200
 	extern int count;
+	extern void io_stihlt();
 #else
 	#define LCD_WIDTH	128
 	#define LCD_HEIGHT	128
 #endif
 
 
-#define M_WIDTH  	4
-#define M_HEIGHT 	4
-#define P_WIDTH  	10
-#define P_HEIGHT 	12
-#define NUM_OF_BLOCK 4
-#define SENSITIVITY 2
+#define MAP_WIDTH  		10
+#define MAP_HEIGHT 		12
+#define NUM_OF_BLOCK 	4
+#define SENSITIVITY 	2
+#define BLOCK_SIZE		10
 
 typedef struct {
 	int x, y;
@@ -34,6 +31,7 @@ typedef struct {
 typedef struct {
 	int xl, xr;
 	int xledge, xredge;
+	int xlrmode;
 	int set;
 	int fall;
 	int rotate;
@@ -50,13 +48,13 @@ typedef enum {
 
 int main();
 void mino_clear(mino *m);
-void map_clear(int a[][10]);
+void map_clear(int a[][MAP_WIDTH]);
 void put_block(int x, int y, int color);
 void put_mino(mino *m);
 void delete_mino(mino *m);
 void put_grid();
-void put_map(int a[][10]);
-int judge_set(int a[][10], mino *m);
+void put_map(int a[][MAP_WIDTH]);
+int judge_set(int a[][MAP_WIDTH], mino *m);
 void rotate_mino(mino *m);
 void new_mino(mino *m);
 void mino_o(mino *m);

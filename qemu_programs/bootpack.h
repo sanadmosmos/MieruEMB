@@ -91,9 +91,6 @@ struct GATE_DESCRIPTOR {
 #define	KEY_OFF			1
 
 /* timer.c */
-struct TIMERCTL {
-	unsigned int count;
-};
 #define PIT_CTRL	0x0043
 #define PIT_CNT0	0x0040
 
