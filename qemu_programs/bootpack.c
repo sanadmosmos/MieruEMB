@@ -7,7 +7,7 @@
  **********************************************************************/
 
 char key_data[3] = { 1, 1, 1};
-int count;
+int timer_count;
 
 extern char *e_sw1;
 extern char *e_sw2;
@@ -229,14 +229,14 @@ void init_pit(void)
 	io_out8(PIT_CTRL, 0x34);
 	io_out8(PIT_CNT0, 0x9c);
 	io_out8(PIT_CNT0, 0x2e);
-	count = 0;
+	timer_count = 0;
 	return;
 }
 
 void inthandler20(int *esp)
 {
 	io_out8(PIC0_OCW2, 0x60);	/* IRQ-00Žó•tŠ®—¹‚ðPIC‚É’Ê’m */
-	count++;
+	timer_count++;
 	return;
 }
 

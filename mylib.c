@@ -46,8 +46,8 @@ void mylib_putnum(int x, int y, int num, int color){
 /**********************************************************************/
 void mylib_msleep(unsigned int tm){
 #ifdef QEMU
-    count = 0;
-    while(count <= (tm / 10)) {
+    timer_count = 0;
+    while(timer_count <= (tm / 10)) {
         io_stihlt();
     }
 #else

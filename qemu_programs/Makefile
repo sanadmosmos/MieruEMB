@@ -33,6 +33,6 @@ $(TARGET).bin : $(SRCS)
 clean :
 	-$(RM) *.bin
 	-$(RM) *.o
-	-$(RM) $(TARGET_SYS)
-	-$(RM) $(TARGET_IMG)
+	-$(RM) $(TARGET).sys
+	-$(RM) $(TARGET).img
 

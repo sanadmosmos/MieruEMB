@@ -4,7 +4,7 @@
 #ifdef QEMU
 	#define LCD_WIDTH	320
 	#define LCD_HEIGHT	200
-	extern int count;
+	extern int timer_count;
 	extern void io_stihlt();
 #else
 	#define LCD_WIDTH	128
