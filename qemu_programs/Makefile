@@ -6,9 +6,9 @@ SRCS += ../main.c
 SRCS += ../mylib.c
 SRCS += ../func.c
 
-PREFIX	 = 
-GCC		 = $(PREFIX)gcc
-RM       = rm -f
+PREFIX	= 
+GCC		= $(PREFIX)gcc
+RM		= rm -f
 
 
 

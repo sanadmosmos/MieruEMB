@@ -85,27 +85,81 @@ void put_map(int a[][MAP_WIDTH])
 }
 
 /**********************************************************************/
-int judge_set(int a[][MAP_WIDTH], mino *m)
+void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f)
 {
-	int i, j;
-	int bottom = 0, left = 0, right = 0;
-	int tmp = 0;
+	int i;
+	int left = 0, right = 0;
+	int flg = 1;
 
 	for (i = 0; i < NUM_OF_BLOCK; i++) {
-		bottom = (m->data[i].y > bottom) ? m->data[i].y : bottom;
 		left = (m->data[i].x < left) ? m->data[i].x : left;
 		right = (m->data[i].x > right) ? m->data[i].x : right;
 	}
 	while ((m->x + left) < 0)
-		m->x += 1;
+		m->x++;
 	while ((m->x + right) > 9)
-		m->x -= 1;
-	if ((m->y + bottom) >= (MAP_HEIGHT - 1)) {
+		m->x--;
+	
+//	while (flg != 0) {
+		flg = 1;
+		for (i = 0; i < NUM_OF_BLOCK; i++) {
+			if (a[m->y+m->data[i].y][m->x+m->data[i].x] != 0)
+				flg++;
+		}
+		if (flg == 1)
+			return;
+
+		if (f->movl == 1) {
+			m->x++;
+		}
+		if (f->movr == 1) {
+			m->x--;
+		}
+		if (f->movrotate == 1) {
+			m->y--;
+			for (i = 0; i < 4; i++) {
+				//f->
+			}
+		}
+		if (f->movdown)
+			return;
+	//}
+}
+
+int judge_set(int a[][MAP_WIDTH], mino *m, flag *f)
+{
+	int i;
+	int bottom = 0;
+
+	// in map range
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		bottom = (m->data[i].y > bottom) ? m->data[i].y : bottom;
+	}
+	if ((m->y + bottom) >= MAP_HEIGHT) {
 		return 1;
 	}
 
-
+	// block
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		if (a[m->y+m->data[i].y][m->x+m->data[i].x] != 0) {
+			return 1;
+		}
+	}
 	return 0;
+}
+
+/**********************************************************************/
+void down_1line(int a[][MAP_WIDTH], int num)
+{
+	int i, j;
+	for (i = num; i > 0; i--) {
+		for (j = 0; j < MAP_WIDTH; j++) {
+			a[i][j] = a[i-1][j];
+		}
+	}
+	for (j = 0; j < MAP_WIDTH; j++) {
+		a[0][j] = 0;
+	}
 }
 
 /**********************************************************************/
@@ -188,7 +242,7 @@ void new_mino(mino *m)
 	count_mino++;
 	count_mino %= 7;
 	m->x = 4;
-	m->y = 0;
+	m->y = 1;
 }
 
 /**********************************************************************/

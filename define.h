@@ -17,6 +17,7 @@
 #define NUM_OF_BLOCK 	4
 #define SENSITIVITY 	2
 #define BLOCK_SIZE		10
+#define DROP_SPEED		10
 
 typedef struct {
 	int x, y;
@@ -32,6 +33,7 @@ typedef struct {
 	int xl, xr;
 	int xledge, xredge;
 	int xlrmode;
+	int movl, movr, movdown, movrotate;
 	int set;
 	int fall;
 	int rotate;
@@ -42,8 +44,8 @@ typedef enum {
 	NEW_BLOCK,
 	FALL,
 	SET,
-	CLEAR_LINE,
-	END
+	END,
+	WAIT
 } STATES;
 
 int main();
@@ -54,7 +56,9 @@ void put_mino(mino *m);
 void delete_mino(mino *m);
 void put_grid();
 void put_map(int a[][MAP_WIDTH]);
-int judge_set(int a[][MAP_WIDTH], mino *m);
+void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f);
+int  judge_set(int a[][MAP_WIDTH], mino *m, flag *f);
+void down_1line(int a[][MAP_WIDTH], int num);
 void rotate_mino(mino *m);
 void new_mino(mino *m);
 void mino_o(mino *m);

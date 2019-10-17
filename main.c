@@ -15,7 +15,7 @@ volatile char *e_gin  = (char*)0x8001ff;
 
 /**********************************************************************/
 
-int map[MAP_HEIGHT][MAP_WIDTH];
+int map[MAP_HEIGHT+1][MAP_WIDTH];
 STATES state;
 mino m;
 flag f;
@@ -40,26 +40,41 @@ int main()
 
 			case NEW_BLOCK:
 				new_mino(&m);
-				state = FALL;
+				if (judge_set(map, &m, &f) == 1) {
+					state = END;
+				} else {
+					state = FALL;
+				}
 				break;
 
 			case FALL:
+				f.movl = 0;
+				f.movr = 0;
+				f.movdown = 0;
+				f.movrotate = 0;
 		        delete_mino(&m);
-				if (f.fall > 20) {
-					f.fall = 0;
+				f.fall++;
+				if (f.fall > DROP_SPEED) {
 					m.y++;
+					f.movdown = 1;
 					if (f.set == 1) {
 						f.set = 0;
-						m.y--;
-						state = SET;
+						f.fall = 0;
+						if (judge_set(map, &m, &f) == 1) {
+							m.y--;
+							state = SET;
+							break;
+						}
+					} else if (f.set == 2) {
+						state = END;
 						break;
 					}
 				}
-				f.fall++;
 				// if push rotate
 				if (*e_sw2 == 0 && f.rotate == 0) {
 					rotate_mino(&m);
 					f.rotate = 1;
+					f.movrotate = 1;
 				}
 				if (*e_sw2 == 1 && f.rotate != 0)
 					f.rotate = 0;
@@ -95,15 +110,25 @@ int main()
 						f.xlrmode |= 0b0100;
 				} else if (f.xlrmode == 0b10 || (f.xlrmode & 0b1000) == 0b1000) {
 					// if push left
-					if ((f.xl % SENSITIVITY) == 0)
+					if ((f.xl % SENSITIVITY) == 0) {
 						m.x--;
+						f.movl = 1;
+					}
 				} else if (f.xlrmode == 0b01 || (f.xlrmode & 0b0100) == 0b0100) {
 					// if push right
-					if ((f.xr % SENSITIVITY) == 0)
+					if ((f.xr % SENSITIVITY) == 0) {
 						m.x++;
+						f.movr = 1;
+					}
 				} else;
 		
-				f.set = judge_set(map, &m);
+				judge_overlap(map, &m, &f);
+				if (f.fall > DROP_SPEED) {
+					f.fall = 0;
+					f.set = judge_set(map, &m, &f);
+					if (f.set == 1)
+						m.y--;
+				}
 		        put_mino(&m);
 				break;
 
@@ -111,16 +136,28 @@ int main()
 				for (i = 0; i < NUM_OF_BLOCK; i++) {
 					map[m.y+m.data[i].y][m.x+m.data[i].x] = m.color;
 				}
+				for (i = MAP_HEIGHT - 1; i >= 0; i--) {
+					tmp = 0;
+					for (j = 0; j < MAP_WIDTH; j++) {
+						if (map[i][j] != 0)
+							tmp++;
+					}
+					if (tmp == MAP_WIDTH) {
+						down_1line(map, i);
+						i++;
+					}
+				}
 				put_map(map);
 				state = NEW_BLOCK;
 				break;
 
-			case CLEAR_LINE:
-				state = NEW_BLOCK;
+			case END:
+				state = WAIT;
 				break;
 
-			case END:
-				state = INIT;
+			case WAIT:
+				if ((*e_sw1 * *e_sw2 * *e_sw3) == 0)
+					state = INIT;
 				break;
 
 			default:
