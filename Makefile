@@ -24,6 +24,7 @@ LFLAGS  =
 all:
 	$(MAKE) clean
 	$(MAKE) $(TARGET)
+	$(MAKE) dump
 	$(MAKE) image
 
 $(TARGET): $(OBJS)
@@ -39,7 +40,7 @@ image:
 	$(MEMGEN) -b $(TARGET) 512 > $(TARGET).bin
 
 dump:
-	$(OBJDUMP) -D $(TARGET)
+	$(OBJDUMP) -D $(TARGET) > $(TARGET).dump
 
 read:
 	readelf -a $(TARGET)

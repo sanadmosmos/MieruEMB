@@ -188,6 +188,7 @@ void rotate(int *x, int *y, float ox, float oy)
 void rotate_mino(mino *m)
 {
 	int i;
+	int tmp;
 	switch (m->color) {
 		case MINO_O:
 			break;
@@ -197,12 +198,21 @@ void rotate_mino(mino *m)
 		case MINO_T:
 		case MINO_L:
 			for (i = 0; i < NUM_OF_BLOCK; i++) {
-				rotate(&m->data[i].x, &m->data[i].y, 0, 0);
+				//rotate(&(m->data[i].x), &(m->data[i].y), 0, 0);
+				tmp = m->data[i].x;
+				m->data[i].x = m->data[i].y;
+				m->data[i].y = -1 * tmp;
 			}
 			break;
 		case MINO_I:
 			for (i = 0; i < NUM_OF_BLOCK; i++) {
-				rotate(&m->data[i].x, &m->data[i].y, 0.5, 0.5);
+				//rotate(&m->data[i].x, &m->data[i].y, (float)0.5, (float)0.5);
+				m->data[i].x++;
+				m->data[i].x = ~m->data[i].x & 0b11;
+				m->data[i].x--;
+				tmp = m->data[i].x;
+				m->data[i].x = m->data[i].y;
+				m->data[i].y = tmp;
 			}
 			break;
 		default:

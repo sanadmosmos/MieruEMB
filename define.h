@@ -15,9 +15,9 @@
 #define MAP_WIDTH  		10
 #define MAP_HEIGHT 		12
 #define NUM_OF_BLOCK 	4
-#define SENSITIVITY 	2
+#define SENSITIVITY 	3
 #define BLOCK_SIZE		10
-#define DROP_SPEED		10
+#define DROP_SPEED		20
 
 typedef struct {
 	int x, y;
@@ -59,6 +59,7 @@ void put_map(int a[][MAP_WIDTH]);
 void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f);
 int  judge_set(int a[][MAP_WIDTH], mino *m, flag *f);
 void down_1line(int a[][MAP_WIDTH], int num);
+void rotate(int *x, int *y, float ox, float oy);
 void rotate_mino(mino *m);
 void new_mino(mino *m);
 void mino_o(mino *m);

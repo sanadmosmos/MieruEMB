@@ -35,6 +35,7 @@ int main()
     			mylib_clear(0);
 				put_grid();
 				mino_clear(&m);
+				f.rotate = 0;
 				state = NEW_BLOCK;
 				break;
 
