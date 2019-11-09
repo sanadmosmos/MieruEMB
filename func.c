@@ -29,6 +29,15 @@ void map_clear(int a[][MAP_WIDTH])
 }
 
 /**********************************************************************/
+void lcd_clear(int color)
+{
+	int i, j;
+	for (i = 0; i < 128; i++)
+		for (j = 0; j < 128; j++)
+			e_vram[i*LCD_WIDTH+j] = color;
+}
+
+/**********************************************************************/
 void put_block(int x, int y, int color)
 {
 	int i, j;
@@ -61,6 +70,22 @@ void delete_mino(mino *m)
 	}
 }
 
+void put_next_mino(mino *m_next)
+{
+    int i;
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		put_block(12 + m_next->data[i].x, 2 + m_next->data[i].y, m_next->color);
+	}
+}
+
+void delete_next_mino(mino *m_next)
+{
+	int i;
+	for (i = 0; i < NUM_OF_BLOCK; i++) {
+		put_block(12 + m_next->data[i].x, 2 + m_next->data[i].y, 0);
+	}
+}
+
 /**********************************************************************/
 void put_grid()
 {
@@ -69,6 +94,18 @@ void put_grid()
 		for (j = 0; j <= MAP_WIDTH * BLOCK_SIZE; j++) {
 			if (((i % BLOCK_SIZE) == 0) || ((j % BLOCK_SIZE) == 0))
 				e_vram[OFFSET+i*LCD_WIDTH+j] = 7;
+		}
+	}
+}
+
+/**********************************************************************/
+void put_next()
+{
+	int i, j;
+	for (i = 0; i <= NEXT_WINDOW_SIZE; i++) {
+		for (j = 0; j <= NEXT_WINDOW_SIZE; j++) {
+			if ((i % NEXT_WINDOW_SIZE) == 0 || (j % NEXT_WINDOW_SIZE) == 0)
+				e_vram[(OFFSET+MAP_WIDTH*BLOCK_SIZE+5)+i*LCD_WIDTH+j] = 7;
 		}
 	}
 }
@@ -221,30 +258,41 @@ void rotate_mino(mino *m)
 }
 
 /**********************************************************************/
-void new_mino(mino *m)
+void new_mino(mino *m, mino *m_next)
 {
 	static int count_mino = 0;
+	int i;
+	if (m_next->color == 0) {
+	} else {
+		for (i = 0; i < NUM_OF_BLOCK; i++) {
+			m->data[i].x = m_next->data[i].x;
+			m->data[i].y = m_next->data[i].y;
+		}
+		m->color = m_next->color;
+		m->x = m_next->x;
+		m->y = m_next->y;
+	}
 	switch (count_mino) {
 		case 0:
-			mino_o(m);
+			mino_o(m_next);
 			break;
 		case 1:
-			mino_t(m);
+			mino_t(m_next);
 			break;
 		case 2:
-			mino_l(m);
+			mino_l(m_next);
 			break;
 		case 3:
-			mino_j(m);
+			mino_j(m_next);
 			break;
 		case 4:
-			mino_z(m);
+			mino_z(m_next);
 			break;
 		case 5:
-			mino_s(m);
+			mino_s(m_next);
 			break;
 		case 6:
-			mino_i(m);
+			mino_i(m_next);
 			break;
 		default:
 			break;

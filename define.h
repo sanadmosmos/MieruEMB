@@ -13,11 +13,12 @@
 
 
 #define MAP_WIDTH  		10
-#define MAP_HEIGHT 		12
+#define MAP_HEIGHT 		18
 #define NUM_OF_BLOCK 	4
 #define SENSITIVITY 	3
-#define BLOCK_SIZE		10
-#define DROP_SPEED		20
+#define BLOCK_SIZE		7
+#define NEXT_WINDOW_SIZE (BLOCK_SIZE * 5)
+#define DROP_SPEED		15
 
 typedef struct {
 	int x, y;
@@ -51,17 +52,21 @@ typedef enum {
 int main();
 void mino_clear(mino *m);
 void map_clear(int a[][MAP_WIDTH]);
+void lcd_clear(int color);
 void put_block(int x, int y, int color);
 void put_mino(mino *m);
 void delete_mino(mino *m);
+void put_next_mino(mino *m_next);
+void delete_next_mino(mino *m_next);
 void put_grid();
+void put_next();
 void put_map(int a[][MAP_WIDTH]);
 void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f);
 int  judge_set(int a[][MAP_WIDTH], mino *m, flag *f);
 void down_1line(int a[][MAP_WIDTH], int num);
 void rotate(int *x, int *y, float ox, float oy);
 void rotate_mino(mino *m);
-void new_mino(mino *m);
+void new_mino(mino *m, mino *m_next);
 void mino_o(mino *m);
 void mino_t(mino *m);
 void mino_s(mino *m);

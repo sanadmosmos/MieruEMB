@@ -17,7 +17,7 @@ volatile char *e_gin  = (char*)0x8001ff;
 
 int map[MAP_HEIGHT+1][MAP_WIDTH];
 STATES state;
-mino m;
+mino m, m_next;
 flag f;
 
 /**********************************************************************/
@@ -32,15 +32,19 @@ int main()
 		switch (state) {
 			case INIT:
 				map_clear(map);
-    			mylib_clear(0);
+    			mylib_clear(7);
+				lcd_clear(0);
 				put_grid();
-				mino_clear(&m);
-				f.rotate = 0;
+				put_next();
+				mino_clear(&m_next);
+				new_mino(&m, &m_next);
 				state = NEW_BLOCK;
 				break;
 
 			case NEW_BLOCK:
-				new_mino(&m);
+				delete_next_mino(&m_next);
+				new_mino(&m, &m_next);
+				put_next_mino(&m_next);
 				if (judge_set(map, &m, &f) == 1) {
 					state = END;
 				} else {
