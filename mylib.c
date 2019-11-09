@@ -32,6 +32,14 @@ void mylib_putc(int x, int y, char c, int color){
         }
     }
 }
+
+void mylib_puts(int x, int y, char *p, int color){
+    int i;
+	for (i = 0; *p != '\0'; i++, p++) {
+		mylib_putc(x+i*6, y, *p, color);
+	}
+}
+
 /**********************************************************************/
 void mylib_putnum(int x, int y, int num, int color){
     int i, j;
@@ -41,6 +49,16 @@ void mylib_putnum(int x, int y, int num, int color){
             if(e_number[num][i][j]) e_vram[(x+j)+(y+i)*LCD_WIDTH] = color;
         }
     }
+}
+
+/**********************************************************************/
+void mylib_put_rectangle(int x1, int x2, int y1, int y2, int color){
+	int i, j;
+	for (i = y1; i < y2; i++) {
+		for (j = x1; j < x2; j++) {
+			e_vram[j+i*LCD_WIDTH] = color;
+		}
+	}
 }
 
 /**********************************************************************/

@@ -122,6 +122,40 @@ void put_map(int a[][MAP_WIDTH])
 }
 
 /**********************************************************************/
+void display_gameover()
+{
+	mylib_put_rectangle(10, 81, 30, 60, COLOR_GREEN);
+	mylib_puts(20, 40, "GAMEOVER", COLOR_PURPLE);
+}
+
+/**********************************************************************/
+void display_delete_lines(int delete_lines)
+{
+	int i;
+	int most;
+	int tmp;
+	mylib_puts(85, 61, "LINES", COLOR_WHITE);
+	mylib_put_rectangle(84, 128, 77, 92, COLOR_RED);
+	while(1) {
+		most = 0;
+		for (i = 0, tmp = delete_lines; tmp != 0; i++) {
+			most = tmp;
+			if (tmp < 10)
+				break;
+			tmp /= 10;
+		}
+		mylib_putnum(120 - i*8, 77, most, COLOR_WHITE);
+		tmp = i;
+		for (i = 0; i < tmp; i++) {
+			most *= 10;
+		}
+		delete_lines -= most;
+		if (i <= 0)
+			break;
+	}
+}
+
+/**********************************************************************/
 void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f)
 {
 	int i;
@@ -200,6 +234,7 @@ void down_1line(int a[][MAP_WIDTH], int num)
 }
 
 /**********************************************************************/
+/*
 void rotate(int *x, int *y, float ox, float oy)
 {
 	float tmp_x, tmp_y;
@@ -220,7 +255,7 @@ void rotate(int *x, int *y, float ox, float oy)
 
 	*x = (int)tmp_x;
 	*y = (int)tmp_y;
-}
+}*/
 
 void rotate_mino(mino *m)
 {

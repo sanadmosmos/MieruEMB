@@ -18,7 +18,7 @@
 #define SENSITIVITY 	3
 #define BLOCK_SIZE		7
 #define NEXT_WINDOW_SIZE (BLOCK_SIZE * 5)
-#define DROP_SPEED		15
+#define DROP_SPEED		7
 
 typedef struct {
 	int x, y;
@@ -38,6 +38,7 @@ typedef struct {
 	int set;
 	int fall;
 	int rotate;
+	int drop_speed;
 } flag;
 
 typedef enum {
@@ -61,10 +62,12 @@ void delete_next_mino(mino *m_next);
 void put_grid();
 void put_next();
 void put_map(int a[][MAP_WIDTH]);
+void display_gameover();
+void display_delete_lines(int delete_lines);
 void judge_overlap(int a[][MAP_WIDTH], mino *m, flag *f);
 int  judge_set(int a[][MAP_WIDTH], mino *m, flag *f);
 void down_1line(int a[][MAP_WIDTH], int num);
-void rotate(int *x, int *y, float ox, float oy);
+//void rotate(int *x, int *y, float ox, float oy);
 void rotate_mino(mino *m);
 void new_mino(mino *m, mino *m_next);
 void mino_o(mino *m);
@@ -83,6 +86,14 @@ void mino_i(mino *m);
 #define MINO_I 6 // light blue
 #define MINO_L 7 // white
 
+#define COLOR_BLACK			0
+#define COLOR_RED			1
+#define COLOR_GREEN			2
+#define COLOR_YELLOW		3
+#define COLOR_BLUE			4
+#define COLOR_PURPLE 		5
+#define COLOR_LIGHT_BLUE 	6
+#define COLOR_WHITE			7
 #define OFFSET 10
 
 
@@ -90,7 +101,9 @@ void mino_i(mino *m);
 /* mylib.c */
 void mylib_putpic(int x, int y, int width, int height, const unsigned int data[][width]);
 void mylib_putc(int x, int y, char c, int color);
+void mylib_puts(int x, int y, char *p, int color);
 void mylib_putnum(int x, int y, int num, int color);
+void mylib_put_rectangle(int x1, int x2, int y1, int y2, int color);
 void mylib_msleep(unsigned int tm);
 void mylib_clear(int color);
 

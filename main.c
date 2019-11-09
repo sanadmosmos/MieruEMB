@@ -19,6 +19,8 @@ int map[MAP_HEIGHT+1][MAP_WIDTH];
 STATES state;
 mino m, m_next;
 flag f;
+int delete_lines;
+int drop_speed = DROP_SPEED;
 
 /**********************************************************************/
 int main()
@@ -31,6 +33,8 @@ int main()
     while(1){
 		switch (state) {
 			case INIT:
+				delete_lines = 0;
+				drop_speed = DROP_SPEED;
 				map_clear(map);
     			mylib_clear(7);
 				lcd_clear(0);
@@ -45,10 +49,19 @@ int main()
 				delete_next_mino(&m_next);
 				new_mino(&m, &m_next);
 				put_next_mino(&m_next);
+				display_delete_lines(delete_lines);
 				if (judge_set(map, &m, &f) == 1) {
 					state = END;
 				} else {
 					state = FALL;
+				}
+				if ((delete_lines & 0b100) == 0b100) {
+					if (f.drop_speed == 0) {
+						f.drop_speed = 1;
+						drop_speed--;
+					}
+				} else {
+					f.drop_speed = 0;
 				}
 				break;
 
@@ -59,7 +72,7 @@ int main()
 				f.movrotate = 0;
 		        delete_mino(&m);
 				f.fall++;
-				if (f.fall > DROP_SPEED) {
+				if (f.fall > drop_speed) {
 					m.y++;
 					f.movdown = 1;
 					if (f.set == 1) {
@@ -128,7 +141,7 @@ int main()
 				} else;
 		
 				judge_overlap(map, &m, &f);
-				if (f.fall > DROP_SPEED) {
+				if (f.fall > drop_speed) {
 					f.fall = 0;
 					f.set = judge_set(map, &m, &f);
 					if (f.set == 1)
@@ -150,6 +163,7 @@ int main()
 					if (tmp == MAP_WIDTH) {
 						down_1line(map, i);
 						i++;
+						delete_lines++;
 					}
 				}
 				put_map(map);
@@ -157,6 +171,7 @@ int main()
 				break;
 
 			case END:
+				display_gameover();
 				state = WAIT;
 				break;
 
