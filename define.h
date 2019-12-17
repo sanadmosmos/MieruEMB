@@ -15,7 +15,7 @@
 #define MAP_WIDTH  		10
 #define MAP_HEIGHT 		18
 #define NUM_OF_BLOCK 	4
-#define SENSITIVITY 	3
+#define SENSITIVITY 	4
 #define BLOCK_SIZE		7
 #define NEXT_WINDOW_SIZE (BLOCK_SIZE * 5)
 #define DROP_SPEED		7
@@ -40,6 +40,20 @@ typedef struct {
 	int rotate;
 	int drop_speed;
 } flag;
+
+typedef union {
+	unsigned char byte;
+	struct {
+		unsigned char bit0:1;
+		unsigned char bit1:1;
+		unsigned char bit2:1;
+		unsigned char bit3:1;
+		unsigned char bit4:1;
+		unsigned char bit5:1;
+		unsigned char bit6:1;
+		unsigned char bit7:1;
+	};
+} switch_data;
 
 typedef enum {
 	INIT,
@@ -78,22 +92,37 @@ void mino_l(mino *m);
 void mino_j(mino *m);
 void mino_i(mino *m);
 
-#define MINO_Z 1 // red
-#define MINO_S 2 // green
-#define MINO_O 3 // yellow
-#define MINO_J 4 // blue
-#define MINO_T 5 // purple
-#define MINO_I 6 // light blue
-#define MINO_L 7 // white
+#define COLOR_4BIT
 
-#define COLOR_BLACK			0
-#define COLOR_RED			1
-#define COLOR_GREEN			2
-#define COLOR_YELLOW		3
-#define COLOR_BLUE			4
-#define COLOR_PURPLE 		5
-#define COLOR_LIGHT_BLUE 	6
-#define COLOR_WHITE			7
+#if defined(COLOR_3BIT)
+#define COLOR_BLACK			0b000
+#define COLOR_RED			0b001
+#define COLOR_GREEN			0b010
+#define COLOR_YELLOW		0b011
+#define COLOR_BLUE			0b100
+#define COLOR_PURPLE 		0b101
+#define COLOR_LIGHT_BLUE 	0b110
+#define COLOR_WHITE			0b111
+#elif defined(COLOR_4BIT)
+#define COLOR_BLACK			0b0000
+#define COLOR_RED			0b0001
+#define COLOR_GREEN			0b1010
+#define COLOR_YELLOW		0b1011
+#define COLOR_BLUE			0b0100
+#define COLOR_PURPLE 		0b0101
+#define COLOR_LIGHT_BLUE 	0b1110
+#define COLOR_WHITE			0b1111
+#define COLOR_ORANGE		0b1001
+#endif
+
+#define MINO_Z COLOR_RED
+#define MINO_S COLOR_GREEN
+#define MINO_O COLOR_YELLOW
+#define MINO_J COLOR_BLUE
+#define MINO_T COLOR_PURPLE
+#define MINO_I COLOR_LIGHT_BLUE
+#define MINO_L COLOR_ORANGE
+
 #define OFFSET 10
 
 

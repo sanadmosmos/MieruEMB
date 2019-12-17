@@ -19,6 +19,7 @@ int map[MAP_HEIGHT+1][MAP_WIDTH];
 STATES state;
 mino m, m_next;
 flag f;
+unsigned char sw[8];
 int delete_lines;
 int drop_speed = DROP_SPEED;
 
@@ -27,10 +28,25 @@ int main()
 {
 	int i, j;
 	int tmp;
+	int time;
+	int count = 0;
 
 	state = INIT;
 	
     while(1){
+        /*
+		time = *e_time + 20;
+		while (time > *e_time && count >= 8) {
+			*e_gp1 = !*e_gp1;
+			if (*e_gp1 == 1)
+				continue;
+
+			if (*e_gin == 1) {
+				count = 0;
+			}
+			sw[count%8] = *e_gp2;
+			count++;
+		}*/
 		switch (state) {
 			case INIT:
 				delete_lines = 0;

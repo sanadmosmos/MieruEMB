@@ -48,7 +48,7 @@ read:
 clean:
 	rm -f *.o *~ log.txt $(TARGET) $(TARGET).bin
 
-qemu:
+qemu: qemu_clean
 	make -C qemu_programs
 
 qemu_clean:
