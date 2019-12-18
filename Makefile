@@ -16,7 +16,7 @@ MEMGEN  = memgen
 
 AFLAGS  = 
 CFLAGS  = -Wall -O2
-LFLAGS  =
+LFLAGS  = -L/usr/local/mipsel-emb/usr/lib -lc
 
 .SUFFIXES:
 .SUFFIXES: .o .c .S
@@ -28,7 +28,7 @@ all:
 	$(MAKE) image
 
 $(TARGET): $(OBJS)
-	$(MIPSLD) $(LFLAGS) -T stdld.script $(OBJS) -o $(TARGET)
+	$(MIPSLD) $(LFLAGS) -T stdld.script $(OBJS) -o $(TARGET) -lc
 
 .c.o:
 	$(MIPSCC) $(CFLAGS) -c $(@D)/$(<F) -o $(@D)/$(@F)

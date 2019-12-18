@@ -1,3 +1,4 @@
+//#include <stdlib.h>
 #include "define.h"
 
 extern volatile char *e_vram;
@@ -93,7 +94,7 @@ void put_grid()
 	for (i = 0; i <= MAP_HEIGHT * BLOCK_SIZE; i++) {
 		for (j = 0; j <= MAP_WIDTH * BLOCK_SIZE; j++) {
 			if (((i % BLOCK_SIZE) == 0) || ((j % BLOCK_SIZE) == 0))
-				e_vram[OFFSET+i*LCD_WIDTH+j] = 7;
+				e_vram[OFFSET+i*LCD_WIDTH+j] = COLOR_LIGHT_GREEN;
 		}
 	}
 }
@@ -105,7 +106,7 @@ void put_next()
 	for (i = 0; i <= NEXT_WINDOW_SIZE; i++) {
 		for (j = 0; j <= NEXT_WINDOW_SIZE; j++) {
 			if ((i % NEXT_WINDOW_SIZE) == 0 || (j % NEXT_WINDOW_SIZE) == 0)
-				e_vram[(OFFSET+MAP_WIDTH*BLOCK_SIZE+5)+i*LCD_WIDTH+j] = 7;
+				e_vram[(OFFSET+MAP_WIDTH*BLOCK_SIZE+5)+i*LCD_WIDTH+j] = COLOR_LIGHT_GREEN;
 		}
 	}
 }
@@ -124,8 +125,9 @@ void put_map(int a[][MAP_WIDTH])
 /**********************************************************************/
 void display_gameover()
 {
-	mylib_put_rectangle(10, 81, 30, 60, COLOR_GREEN);
-	mylib_puts(20, 40, "GAMEOVER", COLOR_PURPLE);
+	mylib_put_rectangle(10, 81, 30, 60, COLOR_ULTRAMARINE);
+	mylib_puts(15, 40, "GAMEOVER", COLOR_PURPLE);
+	mylib_puts(16, 39, "GAMEOVER", COLOR_PINK);
 }
 
 /**********************************************************************/
@@ -293,9 +295,39 @@ void rotate_mino(mino *m)
 }
 
 /**********************************************************************/
+extern int map[MAP_HEIGHT+1][MAP_WIDTH];
+int map2seed()
+{
+	int num = 0, sum = 0;
+	int i, j;
+	for (i = 1; i <= MAP_HEIGHT+1; i++) {
+		num = 0;
+		for (j = 0; j < MAP_WIDTH; j++) {
+			num += map[MAP_HEIGHT-i][j] * i;
+		}
+		if (num == 0)
+			break;
+		sum += num;
+	}
+	return sum;
+}
+
+/**********************************************************************/
+int random(int seed)
+{
+	int tmp;
+	tmp = seed * 7;
+	tmp %= 99;
+	tmp = seed * 77;
+	tmp %= 99;
+	return tmp;
+}
+
+/**********************************************************************/
 void new_mino(mino *m, mino *m_next)
 {
-	static int count_mino = 0;
+	static mino_selection ms;
+	int seed, num;
 	int i;
 	if (m_next->color == 0) {
 	} else {
@@ -307,33 +339,66 @@ void new_mino(mino *m, mino *m_next)
 		m->x = m_next->x;
 		m->y = m_next->y;
 	}
-	switch (count_mino) {
-		case 0:
-			mino_o(m_next);
+	seed = map2seed();
+	num = random(seed) % 7;
+	while (1) {
+		int tmp;
+		tmp = ms.byte;
+		switch (num) {
+			case 0:
+				if (ms.t == 0) {
+					ms.t = 1;
+					mino_t(m_next);
+					break;
+				}
+			case 1:
+				if (ms.s == 0) {
+					ms.s = 1;
+					mino_s(m_next);
+					break;
+				}
+			case 2:
+				if (ms.z == 0) {
+					ms.z = 1;
+					mino_z(m_next);
+					break;
+				}
+			case 3:
+				if (ms.l == 0) {
+					ms.l = 1;
+					mino_l(m_next);
+					break;
+				}
+			case 4:
+				if (ms.j == 0) {
+					ms.j = 1;
+					mino_j(m_next);
+					break;
+				}
+			case 5:
+				if (ms.i == 0) {
+					ms.i = 1;
+					mino_i(m_next);
+					break;
+				}
+			case 6:
+				if (ms.o == 0) {
+					ms.o = 1;
+					mino_o(m_next);
+					break;
+				}
+			default:
+				break;
+		}
+		num = 0;
+		if (ms.byte == 0b1111111) {
+			ms.byte = 0;
 			break;
-		case 1:
-			mino_t(m_next);
+		}
+		if (tmp != ms.byte) {
 			break;
-		case 2:
-			mino_l(m_next);
-			break;
-		case 3:
-			mino_j(m_next);
-			break;
-		case 4:
-			mino_z(m_next);
-			break;
-		case 5:
-			mino_s(m_next);
-			break;
-		case 6:
-			mino_i(m_next);
-			break;
-		default:
-			break;
+		}
 	}
-	count_mino++;
-	count_mino %= 7;
 	m->x = 4;
 	m->y = 1;
 }
