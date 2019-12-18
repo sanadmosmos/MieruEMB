@@ -41,6 +41,20 @@ typedef struct {
 	int drop_speed;
 } flag;
 
+typedef union {
+	unsigned char byte;
+	struct {
+		unsigned char t:1;
+		unsigned char s:1;
+		unsigned char z:1;
+		unsigned char l:1;
+		unsigned char j:1;
+		unsigned char i:1;
+		unsigned char o:1;
+		unsigned char :1;
+	};
+} mino_selection;
+
 typedef enum {
 	INIT,
 	NEW_BLOCK,
@@ -69,6 +83,7 @@ int  judge_set(int a[][MAP_WIDTH], mino *m, flag *f);
 void down_1line(int a[][MAP_WIDTH], int num);
 //void rotate(int *x, int *y, float ox, float oy);
 void rotate_mino(mino *m);
+int map2seed();
 void new_mino(mino *m, mino *m_next);
 void mino_o(mino *m);
 void mino_t(mino *m);
@@ -98,7 +113,11 @@ void mino_i(mino *m);
 #define COLOR_PURPLE 		0b0101
 #define COLOR_LIGHT_BLUE 	0b1110
 #define COLOR_WHITE			0b1111
+
 #define COLOR_ORANGE		0b1001
+#define COLOR_LIGHT_GREEN	0b1000
+#define COLOR_ULTRAMARINE	0b1100
+#define COLOR_PINK			0b1101
 #endif
 
 #define MINO_Z COLOR_RED
@@ -118,6 +137,7 @@ void mylib_putpic(int x, int y, int width, int height, const unsigned int data[]
 void mylib_putc(int x, int y, char c, int color);
 void mylib_puts(int x, int y, char *p, int color);
 void mylib_putnum(int x, int y, int num, int color);
+void mylib_puthex(int x, int y, unsigned int hex, int color);
 void mylib_put_rectangle(int x1, int x2, int y1, int y2, int color);
 void mylib_msleep(unsigned int tm);
 void mylib_clear(int color);
